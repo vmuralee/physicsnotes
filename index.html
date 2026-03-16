@@ -1,12 +1,319 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Website</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Academic Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #141414;
+      --border: #2a2a2a;
+      --accent: #c8a96e;
+      --accent-dim: #a07840;
+      --text: #e8e0d5;
+      --text-muted: #7a7060;
+      --sub-bg: #1a1a1a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,169,110,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,110,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .header-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    .header p {
+      margin-top: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Divider */
+    .divider {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.5rem 0;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.2s forwards;
+    }
+
+    /* Nav Cards */
+    .nav-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 2px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+      transition: border-color 0.25s;
+    }
+
+    .nav-card:nth-child(1) { animation-delay: 0.3s; }
+    .nav-card:nth-child(2) { animation-delay: 0.45s; }
+
+    .nav-card:hover {
+      border-color: var(--accent-dim);
+    }
+
+    /* Card top link row */
+    .card-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s;
+    }
+
+    .card-link:hover {
+      background: rgba(200,169,110,0.04);
+    }
+
+    .card-link:hover .card-arrow {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      background: var(--sub-bg);
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .card-meta {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.15rem;
+    }
+
+    .card-arrow {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      transition: transform 0.2s, color 0.2s;
+    }
+
+    /* Subsections */
+    .subsections {
+      border-top: 1px solid var(--border);
+      padding: 0.75rem 0;
+    }
+
+    .subsection-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0.25rem 1.5rem 0.5rem;
+    }
+
+    .subsection-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1.5rem;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+      transition: color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .subsection-item::before {
+      content: '';
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+      position: absolute;
+      left: 1.5rem;
+      top: 0;
+    }
+
+    .subsection-item:hover {
+      color: var(--accent);
+      background: rgba(200,169,110,0.03);
+    }
+
+    .subsection-item:hover::before {
+      background: var(--accent-dim);
+    }
+
+    .subsection-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      margin-left: 0.25rem;
+      transition: background 0.2s;
+    }
+
+    .subsection-item:hover .subsection-dot {
+      background: var(--accent);
+    }
+
+    .subsection-text {
+      margin-left: 0.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.6s forwards;
+    }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
 
-<h1>Welcome to My Website</h1>
-<p>This is my first GitHub website.</p>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-label">Academic Portfolio</div>
+      <h1>My Documents</h1>
+      <p>Resume &amp; Lecture Notes — all in one place.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Nav Cards -->
+    <div class="nav-cards">
+
+      <!-- Resume Card -->
+      <div class="nav-card">
+        <a href="resume.pdf" class="card-link">
+          <div class="card-left">
+            <div class="card-icon">📄</div>
+            <div>
+              <div class="card-title">Resume</div>
+              <div class="card-meta">Curriculum Vitae</div>
+            </div>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+      </div>
+
+      <!-- Lecture Notes Card -->
+      <div class="nav-card">
+        <a href="lecture-notes.html" class="card-link">
+          <div class="card-left">
+            <div class="card-icon">📚</div>
+            <div>
+              <div class="card-title">Lecture Notes</div>
+              <div class="card-meta">Course Materials</div>
+            </div>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>
+
+        <!-- Subsections -->
+        <div class="subsections">
+          <div class="subsection-label">Sections</div>
+          <a href="lecture-notes.html#newtons-mechanics" class="subsection-item">
+            <span class="subsection-dot"></span>
+            <span class="subsection-text">Newton's Mechanics</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">Updated · 2026</div>
+
+  </div>
 
 </body>
 </html>
