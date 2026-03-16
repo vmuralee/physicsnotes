@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Academic Portfolio</title>
+  <title>Physics Quest</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -33,7 +33,6 @@
       overflow-x: hidden;
     }
 
-    /* Subtle grid background */
     body::before {
       content: '';
       position: fixed;
@@ -53,7 +52,6 @@
       max-width: 640px;
     }
 
-    /* Header */
     .header {
       margin-bottom: 3rem;
       opacity: 0;
@@ -83,7 +81,6 @@
       letter-spacing: 0.04em;
     }
 
-    /* Divider */
     .divider {
       width: 48px;
       height: 1px;
@@ -93,7 +90,6 @@
       animation: fadeUp 0.7s ease 0.2s forwards;
     }
 
-    /* Nav Cards */
     .nav-card {
       border: 1px solid var(--border);
       background: var(--surface);
@@ -108,11 +104,8 @@
     .nav-card:nth-child(1) { animation-delay: 0.3s; }
     .nav-card:nth-child(2) { animation-delay: 0.45s; }
 
-    .nav-card:hover {
-      border-color: var(--accent-dim);
-    }
+    .nav-card:hover { border-color: var(--accent-dim); }
 
-    /* Card top link row */
     .card-link {
       display: flex;
       align-items: center;
@@ -123,14 +116,8 @@
       transition: background 0.2s;
     }
 
-    .card-link:hover {
-      background: rgba(200,169,110,0.04);
-    }
-
-    .card-link:hover .card-arrow {
-      transform: translateX(4px);
-      color: var(--accent);
-    }
+    .card-link:hover { background: rgba(200,169,110,0.04); }
+    .card-link:hover .card-arrow { transform: translateX(4px); color: var(--accent); }
 
     .card-left {
       display: flex;
@@ -173,6 +160,32 @@
       transition: transform 0.2s, color 0.2s;
     }
 
+    /* Bio block */
+    .card-bio {
+      border-top: 1px solid var(--border);
+      padding: 1.1rem 1.5rem 1.25rem;
+      font-size: 0.78rem;
+      line-height: 1.9;
+      color: var(--text-muted);
+      background: var(--sub-bg);
+    }
+
+    .card-bio p {
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .card-bio p::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.35em;
+      bottom: 0.35em;
+      width: 1px;
+      background: var(--accent-dim);
+      opacity: 0.5;
+    }
+
     /* Subsections */
     .subsections {
       border-top: 1px solid var(--border);
@@ -210,14 +223,8 @@
       top: 0;
     }
 
-    .subsection-item:hover {
-      color: var(--accent);
-      background: rgba(200,169,110,0.03);
-    }
-
-    .subsection-item:hover::before {
-      background: var(--accent-dim);
-    }
+    .subsection-item:hover { color: var(--accent); background: rgba(200,169,110,0.03); }
+    .subsection-item:hover::before { background: var(--accent-dim); }
 
     .subsection-dot {
       width: 5px;
@@ -229,15 +236,9 @@
       transition: background 0.2s;
     }
 
-    .subsection-item:hover .subsection-dot {
-      background: var(--accent);
-    }
+    .subsection-item:hover .subsection-dot { background: var(--accent); }
+    .subsection-text { margin-left: 0.5rem; }
 
-    .subsection-text {
-      margin-left: 0.5rem;
-    }
-
-    /* Footer */
     .footer {
       margin-top: 2.5rem;
       text-align: center;
@@ -249,7 +250,35 @@
       animation: fadeUp 0.7s ease 0.6s forwards;
     }
 
-    /* Animation */
+    /* Timeline */
+    .timeline {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--accent-dim);
+    }
+
+    .tl-item {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+
+    .tl-year {
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      min-width: 90px;
+    }
+
+    .tl-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -260,7 +289,6 @@
 
   <div class="container">
 
-    <!-- Header -->
     <div class="header">
       <div class="header-label">Academic Portfolio</div>
       <h1>Physics Quest</h1>
@@ -269,21 +297,37 @@
 
     <div class="divider"></div>
 
-    <!-- Nav Cards -->
     <div class="nav-cards">
 
-      <!-- Resume Card -->
+      <!-- My Info Card -->
       <div class="nav-card">
-        <a href="resume.pdf" class="card-link">
+        <div class="card-link" style="cursor:default;">
           <div class="card-left">
-            <div class="card-icon">📄</div>
+            <img src="IMG_3225.JPG" alt="Vinaya Krishnan MB" style="width:64px;height:64px;object-fit:cover;border-radius:2px;border:1px solid var(--border);flex-shrink:0;" />
             <div>
-              <div class="card-title">My Info</div>
-              <div class="card-meta">Personal details</div>
+              <div class="card-title">Vinaya Krishnan MB</div>
+              <div class="card-meta">My Info</div>
             </div>
           </div>
-          <span class="card-arrow">→</span>
-        </a>
+        </div>
+
+        <div class="card-bio">
+          <p>I am always curious to understand the fundamentals of nature and believe the way is abstract and beautiful. I started my research career in the field of elementary particle physics and the Large Hadron Collider (LHC) experiments at CERN. In my research, I worked with a large dataset and developed expertise in machine learning to handle it effectively. On this platform I will share my thoughts on various physics topics that I am fond of at different times.</p>
+          <div class="timeline">
+            <div class="tl-item">
+              <span class="tl-year">2025 – Present</span>
+              <span class="tl-desc">Adhoc Faculty at KCAET</span>
+            </div>
+            <div class="tl-item">
+              <span class="tl-year">2023 – 2025</span>
+              <span class="tl-desc">Researcher at University of Pisa</span>
+            </div>
+            <div class="tl-item">
+              <span class="tl-year">2023</span>
+              <span class="tl-desc">PhD in High Energy Physics, Institute of Physics</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Lecture Notes Card -->
@@ -299,7 +343,6 @@
           <span class="card-arrow">→</span>
         </a>
 
-        <!-- Subsections -->
         <div class="subsections">
           <div class="subsection-label">Sections</div>
           <a href="lecture-notes.html#newtons-mechanics" class="subsection-item">
