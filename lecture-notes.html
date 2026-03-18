@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newton's Mechanics — Lecture Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #141414;
+      --border: #2a2a2a;
+      --accent: #c8a96e;
+      --accent-dim: #a07840;
+      --text: #e8e0d5;
+      --text-muted: #7a7060;
+      --sub-bg: #1a1a1a;
+      --eq-bg: #111;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lora', serif;
+      line-height: 1.85;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Back link */
+    .back-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--accent); }
+
+    .back-sep {
+      color: var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+    }
+
+    .back-current {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    /* Layout */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+
+    /* Hero */
+    .doc-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.1s forwards;
+    }
+
+    .doc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.2s forwards;
+    }
+
+    .doc-divider {
+      width: 56px;
+      height: 1px;
+      background: var(--accent);
+      margin: 1.75rem 0 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.3s forwards;
+    }
+
+    /* TOC */
+    .toc {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 2px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.4s forwards;
+    }
+
+    .toc-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .toc a {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.25rem 0;
+      border-left: 1px solid var(--border);
+      padding-left: 0.85rem;
+      margin-bottom: 0.2rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .toc a:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+    .toc a.sub {
+      margin-left: 1rem;
+      font-size: 0.73rem;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    .section:nth-child(1) { animation-delay: 0.5s; }
+    .section:nth-child(2) { animation-delay: 0.6s; }
+    .section:nth-child(3) { animation-delay: 0.7s; }
+    .section:nth-child(4) { animation-delay: 0.8s; }
+
+    .section-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 1.75rem 0 0.75rem;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+      color: #c8bfb4;
+      margin-bottom: 1rem;
+    }
+
+    /* Equations */
+    .eq-block {
+      background: var(--eq-bg);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--accent-dim);
+      border-radius: 2px;
+      padding: 1.1rem 1.5rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .eq-block .eq-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Initial conditions box */
+    .ic-box {
+      background: var(--sub-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0 1.25rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 2;
+    }
+
+    /* Scenario callout */
+    .scenario {
+      border-left: 2px solid var(--accent-dim);
+      padding: 0.75rem 1.25rem;
+      margin: 1.25rem 0;
+      background: rgba(200,169,110,0.03);
+    }
+
+    .scenario-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .scenario p {
+      margin-bottom: 0;
+    }
+
+    /* Result tag */
+    .result-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      margin-top: 0.5rem;
+    }
+
+    /* Insight box */
+    .insight {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      border-radius: 2px;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Footer */
+    .doc-footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+
+    /* Figure blocks */
+    .fig-block {
+      margin: 1.5rem 0;
+    }
+
+    .fig-block img {
+      width: 100%;
+      border-radius: 2px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .fig-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      border: 1px dashed var(--border);
+      border-radius: 2px;
+      background: var(--sub-bg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .fig-icon {
+      font-size: 1.6rem;
+      color: var(--accent-dim);
+      margin-bottom: 0.25rem;
+    }
+
+    .fig-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .fig-hint {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.63rem;
+      color: var(--border);
+      letter-spacing: 0.05em;
+    }
+
+    .fig-hint code {
+      color: var(--accent-dim);
+      background: none;
+      font-family: inherit;
+    }
+
+    .fig-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .page { padding: 2.5rem 1.25rem 4rem; }
+      .back-bar { padding: 0.75rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky back nav -->
+  <nav class="back-bar">
+    <a href="index.html" class="back-link">← Home</a>
+    <span class="back-sep">/</span>
+    <span class="back-current">Lecture Notes</span>
+  </nav>
+
+  <div class="page">
+
+    <!-- Header -->
+    <div class="doc-label">Lecture Notes</div>
+    <h1 class="doc-title">Newton's Mechanics</h1>
+    <div class="doc-divider"></div>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+      <div class="toc-label">Contents</div>
+      <a href="#newtons-mechanics">1 &nbsp; The Newton's Second Law</a>
+      <a href="#oscillator">2 &nbsp; 1-D Oscillator</a>
+      <a href="#gravitation">3 &nbsp; Law of Gravitation</a>
+      <a href="#planetary" class="sub">3.1 &nbsp; Planetary Motion (2-D Oscillator)</a>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section" id="newtons-mechanics">
+      <h2>The Newton's Second Law</h2>
+      <p>
+        It is often misinterpreted that Newton's second law is the law that defines force. There is no need to define force — in fact, this is the law of predicting the dynamics of classical systems. The idea is:
+      </p>
+      <div class="eq-block">
+        <span>$$\frac{d\vec{p}}{dt} = \vec{F}$$</span>
+        <span class="eq-num">(1)</span>
+      </div>
+      <p>
+        where the force vector $(\vec{F})$ is an empirical quantity that must be defined by the mechanical system. Once we obtain the expression of the force by intelligent guess, it is a matter of time before we can predict the dynamics — evolving the state over time — of the system from its initial state.
+      </p>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section" id="oscillator">
+      <h2>1-D Oscillator</h2>
+      <p>
+        One of the simplest cases is a 1-dimensional oscillator like a spring-mass system or a simple pendulum. In the case of a spring-mass system, a massless spring is attached to a block of mass $m$. The nature of the force acting on the system is proportional and opposite to the displacement acted on the spring.
+      </p>
+      <p>
+        There is also a damping force applied alongside the restoring force; it does not depend on displacement but is proportional to velocity. Therefore, the force is:
+      </p>
+
+      <div class="fig-block">
+        <img src="fig_spring_mass.png" alt="Spring-mass system diagram" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="fig-placeholder" style="display:none;">
+          <span class="fig-icon">⚙︎</span>
+          <span class="fig-label">Figure — Spring-Mass System</span>
+          <span class="fig-hint">Place image as <code>fig_spring_mass.png</code></span>
+        </div>
+        <div class="fig-caption">Spring-mass system: $k$ — spring constant, $m$ — mass, $x$ — displacement</div>
+      </div>
+      <div class="eq-block">
+        <span>$$\vec{F} = -m\gamma\frac{d\vec{x}}{dt} - k\vec{x}$$</span>
+        <span class="eq-num">(2)</span>
+      </div>
+      <p>
+        In Newtonian mechanics, obtaining the expression for the force is the highest task. Eq. 2 is derived from various experiments. The unknown parameters — damping constant $(\gamma)$ and spring constant $(k)$ — are characteristics of the system. The spring constant tells how stiff the spring is, and the damping constant describes the strength of air resistance and friction.
+      </p>
+      <p>
+        To determine the dynamics of motion, substitute Eq. 2 into Eq. 1 and solve:
+      </p>
+      <div class="eq-block">
+        <span>$$\vec{p} = m\frac{d\vec{x}}{dt}$$</span>
+        <span class="eq-num">(3)</span>
+      </div>
+      <div class="eq-block">
+        <span>$$\frac{d^2\vec{x}}{dt^2} + \gamma\frac{d\vec{x}}{dt} + \frac{k}{m}\vec{x} = 0$$</span>
+        <span class="eq-num">(4)</span>
+      </div>
+      <p>
+        To solve the above dynamic equations we must first assign a frame of reference. Choosing $x = 0$ as origin is appropriate — Newton's 1st law ensures consistency in any inertial frame, since before applying external force the mass remains at $x = 0$. The system has only one degree of freedom and $x(t)$ is the position of the mass block from the origin.
+      </p>
+      <div class="eq-block">
+        <span>$$p_x = m\frac{dx}{dt}$$</span>
+        <span class="eq-num">(5)</span>
+      </div>
+      <div class="eq-block">
+        <span>$$\frac{d^2x}{dt^2} + \gamma\frac{dx}{dt} + \frac{k}{m}x = 0$$</span>
+        <span class="eq-num">(6)</span>
+      </div>
+      <p>The RK4 method can be used for solving these differential equations with initial conditions:</p>
+      <div class="ic-box">
+        $t = 0$ &emsp; $x(t=0) = x_0$ <br/>
+        $m\dfrac{dx}{dt}\Big|_{t=0} = p_x(t=0) = 0$
+      </div>
+      <div class="insight">
+        It is interesting to see that as $\gamma \to 0$, position and momentum become sinusoidal with a phase shift of 180°, and the phase space becomes a circle.
+      </div>
+
+      <div class="fig-block">
+        <img src="fig1_oscillator.png" alt="Oscillation motion and phase space diagram" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="fig-placeholder" style="display:none;">
+          <span class="fig-icon">📈</span>
+          <span class="fig-label">Figure 1 — Oscillation Motion &amp; Phase Space</span>
+          <span class="fig-hint">Place image as <code>fig1_oscillator.png</code></span>
+        </div>
+        <div class="fig-caption">Figure 1: Left — Oscillation motion &nbsp;|&nbsp; Right — Phase space diagram of the Oscillator</div>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section" id="gravitation">
+      <div class="section-number">Section 03</div>
+      <h2>Law of Gravitation</h2>
+      <p>
+        It is inferred from experiments that gravitational force is proportional to the mass and inversely proportional to the square of distance:
+      </p>
+      <div class="eq-block">
+        <span>$$\vec{F} = \frac{Gm_1 m_2}{|\vec{r}_2 - \vec{r}_1|^2}(\hat{r}_2 - \hat{r}_1)$$</span>
+        <span class="eq-num">(7)</span>
+      </div>
+
+      <h3 id="planetary">3.1 &nbsp; Planetary Motion (2-D Oscillator)</h3>
+      <p>
+        The success of Newtonian mechanics lies in explaining the solar and Earth–Moon systems. Let us solve the Sun–Earth system using Eq. 1. The equations now have two degrees of freedom because planetary motion is in a plane with the Sun at the origin. Therefore, the equations of motion of the Earth are:
+      </p>
+
+      <div class="fig-block">
+        <img src="fig_two_body.png" alt="Two-body gravitational system diagram" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="fig-placeholder" style="display:none;">
+          <span class="fig-icon">🪐</span>
+          <span class="fig-label">Figure — Two-Body Gravitational System</span>
+          <span class="fig-hint">Place image as <code>fig_two_body.png</code></span>
+        </div>
+        <div class="fig-caption">Two-body system: position vectors $ec{r}_1$, $ec{r}_2$ from origin $O$</div>
+      </div>
+      <div class="eq-block">
+        <span>$$\frac{d^2x}{dt^2} = \frac{Gm_s}{(x^2+y^2)^{3/2}}\,x$$</span>
+        <span class="eq-num">(8)</span>
+      </div>
+      <div class="eq-block">
+        <span>$$\frac{d^2y}{dt^2} = \frac{Gm_s}{(x^2+y^2)^{3/2}}\,y$$</span>
+        <span class="eq-num">(9)</span>
+      </div>
+      <p>
+        Watching Eq. 8 and Eq. 9 closely, they can be recombined as:
+      </p>
+      <div class="eq-block">
+        <span>
+          $$y\frac{d^2x}{dt^2} - x\frac{d^2y}{dt^2} = 0 \quad\Rightarrow\quad \frac{d}{dt}\!\left(y\frac{dx}{dt} - x\frac{dy}{dt}\right) = 0$$
+          $$L_z \equiv yp_x - xp_y = \text{constant}$$
+        </span>
+      </div>
+      <div class="insight">
+        This gives conservation of angular momentum, thereby proving Kepler's 2nd law.
+      </div>
+      <p>We can now solve the planetary equations of motion under two scenarios of initial conditions.</p>
+
+      <div class="scenario">
+        <div class="scenario-label">Scenario 1 — Hyperbolic Trajectory</div>
+        <p>An astronomical object arrives from infinity with a constant horizontal velocity and finite impact parameter.</p>
+        <div class="ic-box">
+          $t = 0$ &ensp; $x(t=0) = 10\,\text{AU}$ &ensp; $y(t=0) = 0.4\,\text{AU}$ <br/>
+          $\dfrac{dx}{dt}\big|_{t=0} = v_x(t=0) = -4\pi$ &ensp; $\dfrac{dy}{dt}\big|_{t=0} = v_y(t=0) = 0$
+        </div>
+        <span class="result-tag">RK4 → Hyperbolic path</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-label">Scenario 2 — Elliptical Trajectory (Earth–Sun)</div>
+        <p>An astronomical object with finite vertical velocity and zero horizontal velocity.</p>
+        <div class="ic-box">
+          $t = 0$ &ensp; $x(t=0) = 1\,\text{AU}$ &ensp; $y(t=0) = 0$ <br/>
+          $\dfrac{dx}{dt}\big|_{t=0} = v_x(t=0) = 0$ &ensp; $\dfrac{dy}{dt}\big|_{t=0} = v_y(t=0) = \pi$
+        </div>
+        <span class="result-tag">RK4 → Elliptical path</span>
+      </div>
+
+
+      <div class="fig-block">
+        <img src="fig2_trajectories.png" alt="Hyperbolic and elliptical trajectories" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="fig-placeholder" style="display:none;">
+          <span class="fig-icon">🌍</span>
+          <span class="fig-label">Figure 2 — Planetary Trajectories</span>
+          <span class="fig-hint">Place image as <code>fig2_trajectories.png</code></span>
+        </div>
+        <div class="fig-caption">Figure 2: Left — Hyperbolic trajectory &nbsp;|&nbsp; Right — Elliptical trajectory (Earth–Sun)</div>
+      </div>
+      <div class="insight">
+        Scenario 2 corresponds to our Earth–Sun system. The Earth clearly did not arrive from infinity and become trapped — the Earth–Sun system was likely bound during the formation of the Sun. Newton's law of gravitation thus provides a hint about the evolution of the solar system.
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="doc-footer">
+      <span>Newton's Mechanics · Lecture Notes</span>
+      <span>Physics Quest · 2026</span>
+    </div>
+
+  </div>
+
+</body>
+</html>
